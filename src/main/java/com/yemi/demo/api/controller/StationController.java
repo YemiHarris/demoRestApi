@@ -22,11 +22,11 @@ public class StationController {
     /**
      * Get Station by stationId.
      *
-     * @param id {@link long}
+     * @param id {@link String}
      * @return {@link ResponseEntity}
      */
     @RequestMapping(value = "/station/id/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getStationById(@PathVariable("id") long id) {
+    public ResponseEntity<?> getStationById(@PathVariable("id") String id) {
         logger.info("Retreiving Station with id {}", id);
         Station station = new Station();
 
