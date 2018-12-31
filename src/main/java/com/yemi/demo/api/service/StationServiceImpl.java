@@ -13,16 +13,44 @@ public class StationServiceImpl implements StationService {
         stationList = populateStationsList();
     }
 
+    /**
+     * Get station by stationId.
+     *
+     * @param stationId {@link String}
+     * @return {@link Station}
+     */
     @Override
     public Station findById(String stationId) {
+        for (Station station : stationList) {
+            if (station.getStationId().equalsIgnoreCase(stationId)) {
+                return station;
+            }
+        }
         return null;
     }
 
+    /**
+     * Get station by name.
+     *
+     * @param name {@link String}
+     * @return {@link Station}
+     */
     @Override
     public Station findByName(String name) {
+        for (Station station : stationList) {
+            if (station.getName().equalsIgnoreCase(name)) {
+                return station;
+            }
+        }
         return null;
     }
 
+    /**
+     * Get station by HDEnabled status.
+     *
+     * @param hdEnabled {@link Boolean}
+     * @return {@link Station}
+     */
     @Override
     public Station findByHdEnabled(Boolean hdEnabled) {
         return null;
@@ -45,6 +73,7 @@ public class StationServiceImpl implements StationService {
 
     /**
      * Creates dummy list of stations.
+     *
      * @return {@link List} of {@link Station}
      */
     private static List<Station> populateStationsList() {
