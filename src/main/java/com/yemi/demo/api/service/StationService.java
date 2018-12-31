@@ -2,12 +2,14 @@ package com.yemi.demo.api.service;
 
 import com.yemi.demo.api.model.Station;
 
+import java.util.List;
+
 public interface StationService {
     Station findById(String stationId);
 
     Station findByName(String name);
 
-    Station findByHdEnabled(Boolean hdEnabled);
+    List<Station> findByHdEnabled(Boolean hdEnabled);
 
     void saveStation(Station station);
 

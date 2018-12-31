@@ -1,10 +1,12 @@
 package com.yemi.demo.api.service;
 
 import com.yemi.demo.api.model.Station;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service("stationService")
 public class StationServiceImpl implements StationService {
 
     private static List<Station> stationList;
@@ -52,8 +54,19 @@ public class StationServiceImpl implements StationService {
      * @return {@link Station}
      */
     @Override
-    public Station findByHdEnabled(Boolean hdEnabled) {
-        return null;
+    public List<Station> findByHdEnabled(Boolean hdEnabled) {
+        List<Station> stations = new ArrayList<>();
+        for (Station station : stationList) {
+            if (station.getHdEnabled() == hdEnabled) {
+                stations.add(station);
+            }
+        }
+
+        if (stations.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return stations;
     }
 
     @Override
