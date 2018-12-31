@@ -2,7 +2,7 @@ package com.yemi.demo.api.controller;
 
 import com.yemi.demo.api.model.Station;
 import com.yemi.demo.api.service.StationService;
-import com.yemi.demo.api.utl.CustomError;
+import com.yemi.demo.api.util.CustomError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
