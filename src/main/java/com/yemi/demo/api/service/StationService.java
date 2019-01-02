@@ -16,4 +16,6 @@ public interface StationService {
     void updateStation(Station station);
 
     void deleteStation(String stationId);
+
+    boolean doesStationExist(Station station);
 }

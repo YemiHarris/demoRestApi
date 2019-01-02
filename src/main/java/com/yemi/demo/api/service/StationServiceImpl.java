@@ -71,17 +71,24 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public void saveStation(Station station) {
-
+        //@todo Validate station data
+        //@todo Save station to db
     }
 
     @Override
     public void updateStation(Station station) {
-
+        //@todo Update existing station information in db
     }
 
     @Override
     public void deleteStation(String stationId) {
+        //@todo Delete station record from db
 
+    }
+
+    public boolean doesStationExist(Station station) {
+        //@todo Check Db for station by name
+        return true;
     }
 
     /**
