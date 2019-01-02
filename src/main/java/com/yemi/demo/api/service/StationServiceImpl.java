@@ -5,11 +5,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Service("stationService")
 public class StationServiceImpl implements StationService {
 
     private static List<Station> stationList;
+
+    private static Random random;
 
     static {
         stationList = populateStationsList();
@@ -70,14 +74,19 @@ public class StationServiceImpl implements StationService {
     }
 
     @Override
-    public void saveStation(Station station) {
-        //@todo Validate station data
-        //@todo Save station to db
+    public String saveStation(Station station) {
+        String stationIndex = UUID.randomUUID().toString();
+        station.setStationId(stationIndex);
+        stationList.add(station);
+        return stationIndex;
+
     }
 
     @Override
     public void updateStation(Station station) {
         //@todo Update existing station information in db
+        int index =stationList.indexOf(station);
+        stationList.set(index, station);
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface StationService {
 
     List<Station> findByHdEnabled(Boolean hdEnabled);
 
-    void saveStation(Station station);
+    String saveStation(Station station);
 
     void updateStation(Station station);
 

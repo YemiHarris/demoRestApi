@@ -99,8 +99,8 @@ public class StationController {
             );
         }
 
-        stationService.saveStation(station);
-        return new ResponseEntity<String>(HttpStatus.CREATED);
+        String stationId = stationService.saveStation(station);
+        return new ResponseEntity<String>(stationId, HttpStatus.CREATED);
     }
 
     /**
