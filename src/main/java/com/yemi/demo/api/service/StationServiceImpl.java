@@ -88,7 +88,7 @@ public class StationServiceImpl implements StationService {
 
     public boolean doesStationExist(Station station) {
         //@todo Check Db for station by name
-        return true;
+        return findByName(station.getName()) != null;
     }
 
     /**
