@@ -13,8 +13,6 @@ public class StationServiceImpl implements StationService {
 
     private static List<Station> stationList;
 
-    private static Random random;
-
     static {
         stationList = populateStationsList();
     }
