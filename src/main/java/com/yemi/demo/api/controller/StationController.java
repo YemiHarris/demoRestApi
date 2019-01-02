@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -73,8 +72,10 @@ public class StationController {
         List<Station> stations = stationService.findByHdEnabled(hdEnabled);
         if (stations.isEmpty()) {
             logger.error("Station with HDEnabled status of {} not found", hdEnabled);
-            CustomError error = new CustomError("Station with HDEnabled status of {" + hdEnabled + "} not found.");
-            return new ResponseEntity(error, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(
+                    new CustomError("Station with HDEnabled status of {" + hdEnabled + "} not found."),
+                    HttpStatus.NOT_FOUND
+            );
         }
 
         return new ResponseEntity<List<Station>>(stations, HttpStatus.OK);
@@ -109,7 +110,7 @@ public class StationController {
      * @param station {@link Station}
      * @return {@link ResponseEntity}
      */
-    @RequestMapping(value = "/station/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/station/id/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateStation(@PathVariable("id") String id, @RequestBody Station station) {
         logger.info("Updating Station with id: {}", id);
 
@@ -119,7 +120,8 @@ public class StationController {
             logger.error("Unable to update. Station with id {} not found", id);
             return new ResponseEntity(
                     new CustomError("Unable to update. Station with id " + id + " not found"),
-                    HttpStatus.NOT_FOUND);
+                    HttpStatus.NOT_FOUND
+            );
         }
 
         currentStation.setName(station.getName());
@@ -128,5 +130,29 @@ public class StationController {
 
         stationService.updateStation(currentStation);
         return new ResponseEntity<Station>(currentStation, HttpStatus.OK);
+    }
+
+    /**
+     * Delete Station by Id.
+     *
+     * @param id {@link String}
+     * @return {@link ResponseEntity}
+     */
+    @RequestMapping(value = "/station/id/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteStation(@PathVariable("id") String id) {
+        logger.info("Deleting Station with id: {}", id);
+
+        Station currentStation = stationService.findById(id);
+
+        if (currentStation == null) {
+            logger.error("Unable to delete. Station with id {} not found", id);
+            return new ResponseEntity(
+                    new CustomError("Unable to delete. Station with id " + id + " not found."),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        stationService.deleteStation(id);
+        return new ResponseEntity<Station>(HttpStatus.NO_CONTENT);
     }
 }
