@@ -84,19 +84,17 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public void updateStation(Station station) {
-        //@todo Update existing station information in db
         int index =stationList.indexOf(station);
         stationList.set(index, station);
     }
 
     @Override
-    public void deleteStation(String stationId) {
-        //@todo Delete station record from db
+    public void deleteStation(Station station) {
+        stationList.remove(station);
 
     }
 
     public boolean doesStationExist(Station station) {
-        //@todo Check Db for station by name
         return findByName(station.getName()) != null;
     }
 

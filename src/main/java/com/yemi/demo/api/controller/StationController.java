@@ -152,7 +152,7 @@ public class StationController {
             );
         }
 
-        stationService.deleteStation(id);
+        stationService.deleteStation(currentStation);
         return new ResponseEntity<Station>(HttpStatus.NO_CONTENT);
     }
 }
