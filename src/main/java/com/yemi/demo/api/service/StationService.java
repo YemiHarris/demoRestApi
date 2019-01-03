@@ -5,17 +5,17 @@ import com.yemi.demo.api.model.Station;
 import java.util.List;
 
 public interface StationService {
-    Station findById(String stationId);
+    Station findById(Long stationId);
 
     Station findByName(String name);
 
-    List<Station> findByHdEnabled(Boolean hdEnabled);
+    List<Station> findByHdEnabled(boolean hdEnabled);
 
-    String saveStation(Station station);
+    void saveStation(Station station);
 
     void updateStation(Station station);
 
-    void deleteStation(Station station);
+    void deleteStation(Long stationId);
 
     boolean doesStationExist(Station station);
 }
