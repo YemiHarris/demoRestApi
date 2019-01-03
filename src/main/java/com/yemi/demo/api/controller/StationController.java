@@ -6,9 +6,11 @@ import com.yemi.demo.api.util.CustomError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -90,7 +92,7 @@ public class StationController {
      * @return {@link ResponseEntity}
      */
     @RequestMapping(value = "/station", method = RequestMethod.POST)
-    public ResponseEntity<?> createStation(@RequestBody Station station) {
+    public ResponseEntity<?> createStation(@RequestBody Station station, UriComponentsBuilder builder) {
         logger.info("Creating Station : {}", station);
 
         if (stationService.doesStationExist(station)) {
@@ -102,7 +104,9 @@ public class StationController {
         }
 
         stationService.saveStation(station);
-        return new ResponseEntity<String>(HttpStatus.CREATED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(builder.path("/station/{id}").buildAndExpand(station.getStationId()).toUri());
+        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
     }
 
     /**
