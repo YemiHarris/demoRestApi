@@ -57,22 +57,43 @@ public class StationServiceImpl implements StationService {
         return stations;
     }
 
+    /**
+     * Save station.
+     *
+     * @param station {@link Station}
+     */
     @Override
     public void saveStation(Station station) {
         stationRepository.save(station);
     }
 
+    /**
+     * Update station.
+     *
+     * @param station {@link Station}
+     */
     @Override
     public void updateStation(Station station) {
         stationRepository.save(station);
     }
 
+    /**
+     * Delete station.
+     *
+     * @param stationId {@link Station}
+     */
     @Override
     public void deleteStation(Long stationId) {
         stationRepository.deleteById(stationId);
 
     }
 
+    /**
+     * Checks if stations exists by name.
+     *
+     * @param station {@link Station}
+     * @return {@link boolean}
+     */
     public boolean doesStationExist(Station station) {
         return findByName(station.getName()) != null;
     }
