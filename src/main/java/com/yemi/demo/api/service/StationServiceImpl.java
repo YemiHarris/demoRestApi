@@ -1,36 +1,33 @@
 package com.yemi.demo.api.service;
 
 import com.yemi.demo.api.model.Station;
+import com.yemi.demo.api.repository.StationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service("stationService")
 public class StationServiceImpl implements StationService {
 
-    private static List<Station> stationList;
+    @Autowired
+    private StationRepository stationRepository;
 
-    static {
-        stationList = populateStationsList();
+    public void setStationRepository(StationRepository repository) {
+        this.stationRepository = repository;
     }
 
     /**
      * Get station by stationId.
      *
-     * @param stationId {@link String}
+     * @param stationId {@link Long}
      * @return {@link Station}
      */
     @Override
-    public Station findById(String stationId) {
-        for (Station station : stationList) {
-            if (station.getStationId().equalsIgnoreCase(stationId)) {
-                return station;
-            }
-        }
-        return null;
+    public Station findById(Long stationId) {
+
+        Optional<Station> station = stationRepository.findById(stationId);
+        return station.orElse(null);
     }
 
     /**
@@ -41,71 +38,63 @@ public class StationServiceImpl implements StationService {
      */
     @Override
     public Station findByName(String name) {
-        for (Station station : stationList) {
-            if (station.getName().equalsIgnoreCase(name)) {
-                return station;
-            }
-        }
-        return null;
+        Station station = stationRepository.findByName(name);
+        return station;
     }
 
     /**
      * Get station by HDEnabled status.
      *
-     * @param hdEnabled {@link Boolean}
+     * @param hdEnabled {@link boolean}
      * @return {@link Station}
      */
     @Override
-    public List<Station> findByHdEnabled(Boolean hdEnabled) {
-        List<Station> stations = new ArrayList<>();
-        for (Station station : stationList) {
-            if (station.getHdEnabled() == hdEnabled) {
-                stations.add(station);
-            }
-        }
-
+    public List<Station> findByHdEnabled(boolean hdEnabled) {
+        List<Station> stations = stationRepository.findByHdEnabled(hdEnabled);
         if (stations.isEmpty()) {
             return new ArrayList<>();
         }
-
         return stations;
-    }
-
-    @Override
-    public String saveStation(Station station) {
-        String stationIndex = UUID.randomUUID().toString();
-        station.setStationId(stationIndex);
-        stationList.add(station);
-        return stationIndex;
-
-    }
-
-    @Override
-    public void updateStation(Station station) {
-        int index =stationList.indexOf(station);
-        stationList.set(index, station);
-    }
-
-    @Override
-    public void deleteStation(Station station) {
-        stationList.remove(station);
-
-    }
-
-    public boolean doesStationExist(Station station) {
-        return findByName(station.getName()) != null;
     }
 
     /**
-     * Creates dummy list of stations.
+     * Save station.
      *
-     * @return {@link List} of {@link Station}
+     * @param station {@link Station}
      */
-    private static List<Station> populateStationsList() {
-        List<Station> stations = new ArrayList<>();
-        stations.add(new Station("A1", "station1", true, "STA1"));
-        stations.add(new Station("A2", "station2", true, "STA2"));
-        stations.add(new Station("A3", "station3", true, "STA3"));
-        return stations;
+    @Override
+    public void saveStation(Station station) {
+        stationRepository.save(station);
+    }
+
+    /**
+     * Update station.
+     *
+     * @param station {@link Station}
+     */
+    @Override
+    public void updateStation(Station station) {
+        stationRepository.save(station);
+    }
+
+    /**
+     * Delete station.
+     *
+     * @param stationId {@link Station}
+     */
+    @Override
+    public void deleteStation(Long stationId) {
+        stationRepository.deleteById(stationId);
+
+    }
+
+    /**
+     * Checks if stations exists by name.
+     *
+     * @param station {@link Station}
+     * @return {@link boolean}
+     */
+    public boolean doesStationExist(Station station) {
+        return findByName(station.getName()) != null;
     }
 }
