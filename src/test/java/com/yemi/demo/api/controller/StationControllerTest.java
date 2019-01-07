@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 public class StationControllerTest extends AbstractTest {
@@ -112,15 +115,75 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void getStation() throws Exception {
         //arrange
+        Station station1 = new Station(
+                10001L,
+                "Station10001",
+                true,
+                "STA10001"
+        );
+
+        Station station2 = new Station(
+                10002L,
+                "Station10002",
+                true,
+                "STA10002"
+        );
+
+        String expected = "[{\"stationId\":10001,\"name\":\"Station10001\",\"hdEnabled\":true,\"callSign\":\"STA10001\"}," +
+                "{\"stationId\":10002,\"name\":\"Station10002\",\"hdEnabled\":true,\"callSign\":\"STA10002\"}]";
+        Mockito.when(stationService.findByHdEnabled(true)).thenReturn(Arrays.asList(station1, station2));
+        String uri = "/api/station?hdEnabled=true";
+
         //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+        System.out.println(actual);
+
         //assert
+        assertEquals(200, status);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    @Test
+    public void getStationNoneFound() throws Exception {
+        // arrange
+        String uri = "/api/station?hdEnabled=false";
+        String expected = "{\"errorMsg\":\"Station with HDEnabled status of {false} not found.\"}";
+        Mockito.when(stationService.findByHdEnabled(false)).thenReturn(new ArrayList<>());
+
+        // act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        // assert
+        assertEquals(404, status);
+        JSONAssert.assertEquals(expected, actual, false);
     }
 
     @Test
     public void createStation() throws Exception {
         //arrange
+        String uri = "/api/station";
+        Station station = new Station();
+        station.setStationId(200L);
+        station.setName("dummyStation");
+        station.setHdEnabled(false);
+        station.setCallSign("dummySTA");
+
+        String inputJson = super.mapToJson(station);
+
         //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+
         //assert
+        assertEquals(201, status);
     }
 
     @Test
