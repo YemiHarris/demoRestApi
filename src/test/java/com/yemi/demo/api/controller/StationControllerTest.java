@@ -7,14 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class StationControllerTest extends AbstractTest {
 
@@ -49,6 +47,23 @@ public class StationControllerTest extends AbstractTest {
 
         //assert
         assertEquals(200, status);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    @Test
+    public void getStationByIdStationNotFound() throws Exception {
+        // arrange
+        String uri = "/api/station/id/10001";
+        String expected = "{\"errorMsg\":\"Station with id 10001 not found.\"}";
+
+        // act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        // assert
+        assertEquals(404, status);
         JSONAssert.assertEquals(expected, actual, false);
     }
 
