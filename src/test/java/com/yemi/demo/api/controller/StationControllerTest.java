@@ -70,8 +70,43 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void getStationByName() throws Exception {
         //arrange
+        Station station = new Station(
+                10001L,
+                "Station10001",
+                true,
+                "STA10001"
+        );
+        String expected = "{stationId:10001,name:Station10001,hdEnabled:true,callSign:STA10001}";
+        Mockito.when(stationService.findByName("Station10001")).thenReturn(station);
+        String uri = "/api/station/name/Station10001";
+
         //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
         //assert
+        assertEquals(200, status);
+        JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    @Test
+    public void getStationByNameStationNotFound() throws Exception {
+        // arrange
+        String uri = "/api/station/name/dummyStation";
+        String expected = "{\"errorMsg\":\"Station with name dummyStation not found.\"}";
+
+        // act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        // assert
+        assertEquals(404, status);
+        JSONAssert.assertEquals(expected, actual, false);
     }
 
     @Test
