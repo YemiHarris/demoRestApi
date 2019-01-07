@@ -215,14 +215,85 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void updateStation() throws Exception {
         //arrange
+        String uri = "/api/station/id/10001";
+        Station station = new Station();
+        station.setStationId(10001L);
+        station.setName("dummyStation");
+        station.setHdEnabled(false);
+        station.setCallSign("dummySTA");
+
+        String inputJson = super.mapToJson(station);
+        Mockito.when(stationService.findById(10001L)).thenReturn(station);
+
         //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
+
+        int status = mvcResult.getResponse().getStatus();
+
         //assert
+        assertEquals(200, status);
+    }
+
+    @Test
+    public void updateStationFailed() throws Exception {
+        //arrange
+        String uri = "/api/station/id/200";
+        String expected = "{\"errorMsg\":\"Unable to update. Station with id 200 not found\"}";
+        Station station = new Station();
+        station.setStationId(200L);
+        station.setName("dummyStation");
+        station.setHdEnabled(false);
+        station.setCallSign("dummySTA");
+
+        String inputJson = super.mapToJson(station);
+        Mockito.when(stationService.findById(200L)).thenReturn(null);
+
+        //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        //assert
+        assertEquals(404, status);
+        JSONAssert.assertEquals(expected, actual, false);
     }
 
     @Test
     public void deleteStation() throws Exception {
         //arrange
+        String uri = "/api/station/id/10001";
+        Station station = new Station(
+                10001L,
+                "Station10001",
+                true,
+                "STA10001"
+        );
+        Mockito.when(stationService.findById(10001L)).thenReturn(station);
+
         //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
         //assert
+        assertEquals(200, status);
+    }
+
+    @Test
+    public void deleteStationDoesNotExist() throws Exception {
+        //arrange
+        String uri = "/api/station/id/10001";
+        String expected = "{\"errorMsg\":\"Unable to delete. Station with id 10001 not found.\"}";
+        Mockito.when(stationService.findById(10001L)).thenReturn(null);
+
+        //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        //assert
+        assertEquals(404, status);
+        JSONAssert.assertEquals(expected, actual, false);
     }
 }
