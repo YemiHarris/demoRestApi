@@ -31,6 +31,7 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void getStationById() throws Exception {
         //arrange
+        String uri = "/api/station/id/10001";
         Station station = new Station(
                 10001L,
                 "Station10001",
@@ -39,7 +40,6 @@ public class StationControllerTest extends AbstractTest {
         );
         String expected = "{stationId:10001,name:Station10001,hdEnabled:true,callSign:STA10001}";
         Mockito.when(stationService.findById(10001L)).thenReturn(station);
-        String uri = "/api/station/id/10001";
 
         //act
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
@@ -73,6 +73,7 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void getStationByName() throws Exception {
         //arrange
+        String uri = "/api/station/name/Station10001";
         Station station = new Station(
                 10001L,
                 "Station10001",
@@ -81,7 +82,6 @@ public class StationControllerTest extends AbstractTest {
         );
         String expected = "{stationId:10001,name:Station10001,hdEnabled:true,callSign:STA10001}";
         Mockito.when(stationService.findByName("Station10001")).thenReturn(station);
-        String uri = "/api/station/name/Station10001";
 
         //act
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
@@ -115,6 +115,7 @@ public class StationControllerTest extends AbstractTest {
     @Test
     public void getStation() throws Exception {
         //arrange
+        String uri = "/api/station?hdEnabled=true";
         Station station1 = new Station(
                 10001L,
                 "Station10001",
@@ -132,7 +133,6 @@ public class StationControllerTest extends AbstractTest {
         String expected = "[{\"stationId\":10001,\"name\":\"Station10001\",\"hdEnabled\":true,\"callSign\":\"STA10001\"}," +
                 "{\"stationId\":10002,\"name\":\"Station10002\",\"hdEnabled\":true,\"callSign\":\"STA10002\"}]";
         Mockito.when(stationService.findByHdEnabled(true)).thenReturn(Arrays.asList(station1, station2));
-        String uri = "/api/station?hdEnabled=true";
 
         //act
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
@@ -176,6 +176,7 @@ public class StationControllerTest extends AbstractTest {
         station.setCallSign("dummySTA");
 
         String inputJson = super.mapToJson(station);
+        Mockito.when(stationService.doesStationExist(station)).thenReturn(false);
 
         //act
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
@@ -184,6 +185,31 @@ public class StationControllerTest extends AbstractTest {
 
         //assert
         assertEquals(201, status);
+    }
+
+    @Test
+    public void createStationFailed() throws Exception {
+        //arrange
+        String uri = "/api/station";
+        String expected = "{\"errorMsg\":\"Station with name dummyStation already exists, unable to create\"}";
+        Station station = new Station();
+        station.setStationId(200L);
+        station.setName("dummyStation");
+        station.setHdEnabled(false);
+        station.setCallSign("dummySTA");
+
+        String inputJson = super.mapToJson(station);
+        Mockito.when(stationService.doesStationExist(station)).thenReturn(true);
+
+        //act
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(inputJson)).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        String actual = mvcResult.getResponse().getContentAsString();
+
+        //assert
+        assertEquals(409, status);
+        JSONAssert.assertEquals(expected, actual, false);
     }
 
     @Test
