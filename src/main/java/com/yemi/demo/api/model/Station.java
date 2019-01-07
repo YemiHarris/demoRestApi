@@ -22,7 +22,8 @@ public class Station {
 
     }
 
-    public Station(String name, boolean hdEnabled, String callSign) {
+    public Station(Long stationId, String name, boolean hdEnabled, String callSign) {
+        this.stationId = stationId;
         this.name = name;
         this.hdEnabled = hdEnabled;
         this.callSign = callSign;
